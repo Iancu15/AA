@@ -1,0 +1,25 @@
+Invariant: Orice nod care apartine cozii are drumul minim setat folosind
+nodurile care nu apartin cozii
+
+Initializare: Toate nodurile apartin cozii si astfel se poate afirma ca
+toate nodurile au drumul minim care l-ar putea avea folosind noduri ce
+apartin multimii vide(adica nodurile care nu apartin cozii care sunt in numar
+de 0 la Initializare).
+
+Mentinere: Pp invariantul la inceput de iteratie e adevarat => invariantul la
+final de iteratie este adevarat.
+
+Se extrage nodul care are distanta cea mai mica fata de sursa folosind nodurile
+scoase din coada. Pentru fiecare vecin al sau, daca distanta sa calculata
+cu nodurile scoase este mai mare decat cea in care trece intermediar prin nodul
+extras, atunci se inlocuieste.
+
+Stim din presupunere ca toate drumurile sunt in minime in relatie cu nodurile
+scoase => ca si d[u] este minim, de asemenea ca toate d[v]-urile au fost
+calculate incat sa fie minime. Astfel daca d[u] + c[u, v] < d[v], atunci sigur
+folosind noua distanta d[u] + c[u, v] va fi cea mai mai mica folosind toate
+nodurile scoase + u.
+
+Finalizare:
+Niciun nod nu mai apartine cozii deci este adevarat ca niciun nod are drumul
+minim.

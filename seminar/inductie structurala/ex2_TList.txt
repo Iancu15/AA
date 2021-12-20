@@ -1,0 +1,24 @@
+range(l) => sum(l) == head(l) * (head(l) + 1)/2
+
+CB:
+l = []
+range([]) = false => orice Adev
+
+PI:
+l = a:x
+Dem: range(a:x) => sum(a:x) == head(a:x) * (head(a:x) + 1)/2 (1)
+II: range(x) => sum(x) == head(x) * (head(x) + 1)/2
+
+range(a:x) = (a - 1 == head(x)) && range(x), pentru x != [] (x este diferit
+de multimea vida ca am abordat deja cazul de baza) =>
+range(a:x) = (a - 1 == head(x)) && range(x) =>
+=> sum(x) == (a - 1) * (a - 1 + 1)/2 = (a - 1) * a/2
+
+Pentru range(a:x) = false => implica orice => ADEV (2)
+Pentru range(a:x) = true (3)
+sum(a:x) = a + sum(x) = a + (a - 1) * a/2 = 2 * a/2 + (a - 1) * a/2 = (a + 1) * a/2 (4)
+head(a:x) * (head(a:x) + 1)/2 =(H1) a * (a + 1) / 2 (5)
+Din (4) si (5) => sum(a:x) = head(a:x) * (head(a:x) + 1)/2 =>
+(sum(a:x) == head(a:x) * (head(a:x) + 1)/2) = true => Conform (1) si (3)
+ca implicatia este true => true ceea ce este adevarata => alaturi de (2) ca
+pasul de inductie se respecta => implicatia este mereu adevarata

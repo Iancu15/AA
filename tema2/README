@@ -1,0 +1,802 @@
+# Iancu Alexandru-Gabriel 324CD
+
+----------------------------------TASK 1----------------------------------------
+
+************LOGICA************
+
+Exemplul folosit pentru explicatii este:
+
+4 4 3
+1 2
+2 3
+2 4
+3 4
+
+Am ales sa-mi mapez variabilele dupa fiecare mafiot si spion astfel:
+
+Maf1_spion1 Maf1_spion2 Maf1_spion3    1-3
+Maf2_spion1 Maf2_spion2 Maf2_spion3    4-6
+Maf3_spion1 Maf3_spion2 Maf3_spion3    7-9
+Maf4_spion1 Maf4_spion2 Maf4_spion3    10-12
+
+Indexarile sunt INDEX_MAFIOT * NR_SPIONI + INDEX_SPION
+
+Daca Mafi_spionj = TRUE => mafiotul i are spionul j, oricare ar fi i si j
+din multimie aferente
+
+Acuma trebuie sa cream niste clauze ce respecta cerinta. Stim ca politia trebuie
+sa asigneze exact un spion pentru fiecare mafiot, nici mai mult nici mai putin.
+Astfel va trebui sa avem clauze care au grija ca un mafiot sa aiba minim un
+spion si clauze care se asigura ca un mafiot are maxim un spion. => 2 seturi
+de clauze
+
+Se spune in enunt ca nu trebuie sa fie repartizati toti spionii, asa ca nu
+avem nevoie de clauze pentru minim un mafiot per spion. De asemenea se
+mentioneaza ca un spion poate sa infiltreze mai multe familii, asa ca nu avem
+niciun prag superior(Ex: max X mafioti per spion) si nici nevoie de clauze
+care sa trateze asta. O alta precizare legata de spioni este ca nu pot sa fie 
+mai multi spioni decat numarul decis la intrare, conditie care se respecta prin
+maparea variabilelor de mai sus. => 0 seturi de clauze
+
+Se mai precizeaza in enunt ca 2 mafioti care se inteleg trebuie sa aiba spioni
+diferiti. => 1 set de clauze
+
+Fiecare set de clauze este explicat pe larg mai jos.
+
+I) Clauze care au grija ca fiecare mafiot sa aiba cel putin un spion:
+
+o clauza pentru fiecare mafiot => 4 clauze a cate 3 variabile(nr. de spioni)
+
+Maf1_spion1 Maf1_spion2 Maf1_spion3    1-3
+Maf2_spion1 Maf2_spion2 Maf2_spion3    4-6
+Maf3_spion1 Maf3_spion2 Maf3_spion3    7-9
+Maf4_spion1 Maf4_spion2 Maf4_spion3    10-12
+
+Indexarea de mai sus am facut-o ca sa fie mai usoara implementarea acestor
+clauze.
+
+Clauza (Mafi_spion1 Mafi_spion2 Mafi_spion3) ne spune ca mafiotul i trebuie sa
+aiba spionul 1 sau spionul 2 sau spionul 3 => cel putin un spion
+
+II) Clauze care au grija ca fiecare mafiot sa aiba cel mult un spion:
+
+pentru fiecare mafiot o sa fie o clauza pentru fiecare pereche de spioni 
+=> combinari de 3 luate cate 2 * 4 => 3!/2! * 4 = 6/2 * 4 = 3 * 4 = 12 clauze
+
+!Maf1_spion1 !Maf1_spion2               -1 -2
+!Maf1_spion1 !Maf1_spion3               -1 -3
+!Maf1_spion2 !Maf1_spion3               -2 -3
+!Maf2_spion1 !Maf2_spion2               -4 -5
+!Maf2_spion1 !Maf2_spion3               -4 -6
+!Maf2_spion2 !Maf2_spion3               -5 -6
+!Maf3_spion1 !Maf3_spion2               -7 -8           
+!Maf3_spion1 !Maf3_spion3               -7 -9                   
+!Maf3_spion2 !Maf3_spion3               -8 -9                           
+!Maf4_spion1 !Maf4_spion2               -10 -11                  
+!Maf4_spion1 !Maf4_spion3               -10 -12                         
+!Maf4_spion2 !Maf4_spion3               -11 -12
+
+Clauza (!Mafi_spion1 !Mafi_spion2) se mai poate scrie ca !(Mafi_spion1 AND
+Mafi_spion2), adica trebuie ca mafiotul 1 sa nu aiba si spionul 1 si spionul 2
+in acelasi timp. Se fac aceleasi clauze pentru oricare pereche de spioni
+diferiti pentru mafiotul i, astfel se asigura ca mafiotul o sa aiba maxim
+unul dintre acei spioni. 
+
+In situatia de mai sus daca Mafi_spion1 e adevarat => Mafi_spion2 si Mafi_spion3
+trebuie sa fie fals => mafiotul are doar spionul 1
+
+III) Clauze care au grija ca mafiotii care se inteleg sa aiba spioni diferiti:
+
+Difera in functie input.
+Pentru exemplul nostru avem relatiile: (1, 2), (2, 3), (2, 4), (3, 4)
+
+pentru fiecare pereche care se inteleg trebuie o clauza pentru fiecare spion =>
+=> numarul de mafioti * numarul de spioni => 4 * 3 = 12 clauze
+
+!Maf1_spion1 !Maf2_spion1                -1 -4                       
+!Maf1_spion2 !Maf2_spion2                -2 -5                      
+!Maf1_spion3 !Maf2_spion3                -3 -6              
+!Maf2_spion1 !Maf3_spion1                -4 -7                              
+!Maf2_spion2 !Maf3_spion2                -5 -8                    
+!Maf2_spion3 !Maf3_spion3                -6 -9                                  
+!Maf2_spion1 !Maf4_spion1                -4 -10                             
+!Maf2_spion2 !Maf4_spion2                -5 -11                             
+!Maf2_spion3 !Maf4_spion3                -6 -12                                     
+!Maf3_spion1 !Maf4_spion1                -7 -10                                 
+!Maf3_spion2 !Maf4_spion2                -8 -11                                 
+!Maf3_spion3 !Maf4_spion3                -9 -12
+
+Pentru fiecare pereche de tipui (i, j) am o clauza (!Mafi_spionk !Mafj_spionk),
+unde k ia valori de la 1 la numarul total de spioni. Clauzele sunt asemanatoare
+cu II in sensul ca impun restrictia ca variabilele Mafi_spionk si Mafj_spionk
+sa nu fie adevarate in acelasi timp. Astfel ma asigur ca fiecare pereche
+de mafioti ce se inteleg nu vor avea acelasi spion k.
+
+************IMPLEMENTARE SI COMPLEXITATE************
+
+1) readProblemData() Task1.java
+
+Citesc cu scanner informatiile din fisier. Am creat in Task.java metodele:
+    * getNumbers() ce ia cu .nextInt() numarul de mafioti si relatii, dupa cum
+am observat acestea se afla mereu in aceeasi ordine la intrare pentru mai multe
+task-uri, asa ca m-am gandit sa o pun in clasa super
+    * getRelations() ce genereaza o lista cu perechile de relatii primite
+la intrare, mereu se primesc aceste relatii la intrare asa ca m-am gandit
+ca mai bine o pun in clasa super
+
+Constructorii ii consider O(1), asa ca nu o sa ii iau in considerare la calculul
+niciunei complexitati. Cel putin nu mi se pare OOP sa faci un constructor de
+complexitate mai mare de O(1).
+
+M-am uitat pe codul sursa al Scanner si am observat ca functia .nextInt() e
+formata doar din niste if-uri nested, fara vreun loop asa ca este O(1) =>
+getNumbers() e tot O(1) ca are 2 apeluri de .nextInt()
+
+Functia getRelations() are un while ce scaneaza fiecare relatie din intrare => 
+numarul de iteratii este egal cu numarul de relatii(il notez M ca in enunt).
+La fiecare iteratiei se fac 2 .nextInt() (O(1)) si un add intr-un ArrayList
+care din documentatie se stie ca e tot O(1) => fiecare iteratie este O(1) =>
+getRelations() are complexitatea O(M).
+
+Cum getRelations() are cea mai mare complexitate din readProblemData() =>
+complexitatea lui readProblemData() este O(M).
+
+2) formulateOracleQuestion() Task1.java
+
+Calculez numarul de clauze dupa logica explicata la sectia LOGICA, pentru a-l
+putea afisa pe prima linie din fisierul de iesire. Cum la calculul numarului de 
+clauze am nevoie doar sa calculez combinari cate 2 am decis sa fac o metoda ce
+face doar asta. Metoda combinationsOf2() are doar operatie si astfel
+complexitatea O(1), am facut impartirile inainte pentru a ajunge la forma
+simpla:
+
+combinari de N luate cate 2 = N!/((N-2)! * 2!) = (N!/(N-2)!) / 2 = (N-1)*N / 2
+
+Stiind ca combinationsOf2() este O(1), se observa la prima vedere ca toata
+partea de calcul de clauze este O(1).
+
+Pentru lejeritate o sa consider writer.append ca fiind O(1). M-am uitat in
+documentatie si nu puteam sa discern clar o complexitate pentru ca dadea unele
+responsabilitati fiilor, se mai folosea de multi-threading si altele. Maxim as
+zice ca ar putea fi O(n) neamortizat din cauza alocarilor de buffere, dar cum 
+java se foloseste de string pools e greu sa-mi dau seama.
+
+a) minimumOneClauses() Task.java
+
+Aceasta functie se ocupa de toate clauzele de tipul "Trebuie sa fie cel putin
+un obiect de tipul propertyTwo asignat obiectelor de tipul propertyOne". Pentru
+task-ul 1 spune ca trebuie sa fie cel putin un spion pentru fiecare mafiot.
+
+Foloseste doua for-uri imbricate independente care merg de la 1 pana la
+propertyOne inclusiv, respectiv de la 1 pana la propertyTwo inclusiv. In
+cazul nostru propertyOne este numarul de mafioti si propertyTwo este numarul de
+spioni. Cum am considerat ca writer.append este O(1), atunci complexitatea
+acestei metode este O(N * K), unde N sunt numarul de mafioti si K sunt numarul
+de spioni. (cazul general O(propertyOne * propertyTwo))
+
+b) maximumOneClauses() Task.java
+
+Aceasta metoda se ocupa de tipurile de clauze maximale. Spre ex. pentru task-ul
+1 trebuie sa avem clauze care au grija ca fiecare mafiot au maxim un spion.
+Are 3 for-uri imbricate, primul independent si al 3-lea dependent de al 2-lea.
+
+Primul merge de la 1 pana la inclusiv propertyOne => complexitate de
+O(propertyOne), in cazul nostru ar fi O(N), unde N este numarul de mafioti
+
+Urmatoarele 2 trebuie luate separate:
+
+Pentru iCounterTwo = 1 => jCounterTwo = 2 ... propertyTwo => propertyTwo - 1
+Pentru iCounterTwo = 2 => jCounterTwo = 3 ... propertyTwo => propertyTwo - 2
+...
+Pentru iCounterTwo = propertyTwo - 1 => jCounterTwo = propertyTwo => 1
+
+Suma rezultate este 1 + 2 + ... + propertyTwo - 2 + propertyTwo - 1 care este
+suma lui Gauss si rezulta ((propertyTwo - 1) * propertyTwo) / 2 adica
+O(propertyTwo^2) => O(K^2) complexitate, cu K numarul de spioni
+
+Astfel complexitatea metodei este O(N) * O(K^2) = O(N * K^2)
+
+c) differentSpiesForRelatedMafiasClauses() Task1.java
+
+Asigura respectarea III) si anume faptul ca doi mafioti care se inteleg nu
+trebuie sa aiba acelasi spion.
+
+Este format din 2 for-uri, primul for merge prin toate relatiile si anume prin
+toate cele M => O(M), unde M reprezinta numarul de relatii
+
+Al doilea for merge de la 1 pana la numarul de spioni => O(K), unde K
+este numarul de spioni => complexitatea functiei este O(K * M)
+
+Asa ca complexitatea formularii clauzelor este de O(N * K) + O(N * K^2) +
+O(K * M) = O(N * K^2 + K * M) = O(K * (N * K + M))
+
+3) decipherOracleAnswer() Task1.java -> getDecipheredResult() Task.java
+
+Metoda decipherOracleAnswer() are niste mici operatii si o apelare a metodei
+assignSpies() care apeleaza la randul ei metoda getDecipheredResult din
+Task.java.
+
+In getDecipheredResult, in cazul task-ului 1, se uita pentru fiecare mafiot
+daca are vreun spion asignat.
+
+Maf1_spion1 Maf1_spion2 Maf1_spion3    1-3
+Maf2_spion1 Maf2_spion2 Maf2_spion3    4-6
+Maf3_spion1 Maf3_spion2 Maf3_spion3    7-9
+Maf4_spion1 Maf4_spion2 Maf4_spion3    10-12
+
+Dupa indexare primele K variabile sunt pentru primul mafiot, urmatoarele K
+sunt pentru al doilea mafiot s.a.m.d. Astfel trebui sa citesc valori cate K
+si caut variabila pozitiva(ar trebui sa fie doar una).
+
+Sunt N * K variabile si astfel va trebui sa le procesez prin N * K iteratii =>
+=> complexitate de O(N * K), unde N sunt numarul de mafioti si K numarul de
+spioni
+
+4) writeAnswer() Task.java
+
+Afiseaza valorile la iesire folosind lista descifrata si valoarea de adevarat
+sau fals. Daca e fals doar afiseaza "False" si astfel are complexitatea O(1),
+daca e adevarat, atunci afiseaza "True" si asignarea spionilor. Cum pentru o
+solutie adevarata fiecare mafiot trebuie sa aiba fix un spion, atunci la afisare
+vor fi N numere => O(N) complexitate pentru scriere, unde N este numarul de
+mafioti.
+
+Astfel complexitatea intregului solve() este O(M) + O(K * (N * K + M)) +
+O(N * K) + O(N) = O(K * (N * K + M) + M) + O(K * (N + 1)) = O(K * (N * K + M)) +
+O(K * N) = O((K + 1) * (N * K) + K * M) = O(K * (N * K) + K * M) =
+O(K * (N * K + M)) => formularea problemei decide complexitatea
+
+************BONUS************
+
+public void maximumOneSpyClauses(Writer writer) throws IOException {
+   for (int mafiaCounter = 1; mafiaCounter <= numberOfMafias * numberOfSpies; mafiaCounter++) {
+       Integer firstVariable = -mafiaCounter;
+       Integer secondVariable;
+       if (mafiaCounter % numberOfSpies == 0) {
+           secondVariable = -(mafiaCounter - numberOfSpies + 1); 
+       } else {
+           secondVariable = -(mafiaCounter + 1);
+       }
+
+       writer.append(firstVariable.toString() + " " + secondVariable.toString() + " 0\n");
+       }
+   }
+}
+
+Codul de mai sus desi esti incomplet functioneaza. Normal ar trebui sa
+functioneze doar pentru un numar de spioni mai mic sau egal decat 3, dar
+ruleaza pentru orice tip de spion. Consider ca motivul pentru care face asta
+este modul in care isi decide solver-ul solutia. Spre ex. nu exista doar o
+solutie buna pentru asignarea spionilor, dar el o alege mereu pe aceeasi.
+Face asta pentru ca urmeaza mereu aceeasi pasi si in momentul in care are
+mai multe posibile solutii o alege pe prima.
+
+Am luat un exemplu cu mai mult de 3 spioni:
+4 4 4
+1 2
+2 3
+2 4
+3 4
+
+Mi-au iesit clauzele urmatoare pentru maxim:
+
+Varianta completa:
+
+-1 -2 0
+-1 -3 0
+-1 -4 0
+-2 -3 0
+-2 -4 0
+-3 -4 0
+-5 -6 0
+-5 -7 0
+-5 -8 0
+-6 -7 0
+-6 -8 0
+-7 -8 0
+-9 -10 0
+-9 -11 0
+-9 -12 0
+-10 -11 0
+-10 -12 0
+-11 -12 0
+-13 -14 0
+-13 -15 0
+-13 -16 0
+-14 -15 0
+-14 -16 0
+-15 -16 0
+
+Varianta incompleta:
+
+-1 -2 0                                 
+-2 -3 0
+-3 -4 0
+-4 -1 0
+-5 -6 0
+-6 -7 0
+-7 -8 0
+-8 -5 0
+-9 -10 0
+-10 -11 0
+-11 -12 0
+-12 -9 0
+-13 -14 0
+-14 -15 0
+-15 -16 0
+-16 -13 0
+
+Se vede clar ca lipsesc niste clauze la varianta incompleta. Ca sa nu trec
+prin tot exemplul o sa iau doar variabilele relevante pentru mafiotul 1:
+
+Maf1_spion1 Maf1_spion2 Maf1_spion3 Maf1_spion4 1-4
+
+La momentul asta singurele restrictii e ca fiecare mafiot trebuie sa aiba un
+spion. Asa ca presupun ca solver-ul va avea pentru moment solutia:
+
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+Dupa ce citeste clauza -1 -2 face deja 2 variante:
+
+-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+1 -2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+El le citeste ca SAU asa ca o ia drept "trebuie sa am fie -1 fie -2", cum -1
+e primul in clauza varianta aia e prima pentru el. Apoi se citeste clauza
+-2 -3 ce imparte cele 2 variante de mai sus in altele 2 fiecare:
+
+-1 -2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+-1 2 -3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+1 -2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+1 -2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+Ultimele 2 variante ajung sa fie tot aceeasi varianta pentru ca -2 e deja
+setat si nu e neaparat nevoie sa-l seteze pe -3. Apoi urmeaza -3 -4:
+
+-1 -2 -3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+-1 -2 3 -4 5 6 7 8 9 10 11 12 13 14 15 16
+
+-1 2 -3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+-1 2 -3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+1 -2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+1 -2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+Se observa acelasi pattern si aici, alea mai putin restrictive ajung mai jos,
+alea mai restrictive ajung mai sus. Si astfel cum e si la iesire 4 o sa fie
+prima solutie. Daca aplicam -4 -1 tot asta o sa fie:
+
+-1 -2 -3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+Motivul pentru care merge este ca facand clauzele de forma -i -(i+1), o sa faca
+mereu prima solutie a solver-ului sa fie cea cu -i. Apoi la urmatoarea cand
+e -(i+1) -(i+2), pentru prima solutie variabila i+1 va fi pozitiva asa ca o
+va putea face negativa si tot asa ajunge pana la final si afiseaza ultimul
+spion disponibil. Mi-am dat seama acum ca nici nu e nevoie de clauzele cu
+-4 -1 spre ex. pentru ca deja s-a decis ca 4 va fi solutie. Asa ca se pot
+folosi si mai putine clauze:
+
+-1 -2 0                                 
+-2 -3 0
+-3 -4 0
+-5 -6 0
+-6 -7 0
+-7 -8 0
+-9 -10 0
+-10 -11 0
+-11 -12 0
+-13 -14 0
+-14 -15 0
+-15 -16 0
+
+Concluzie: Motivul pentru care merge este ca clauzele au o ordine crescatoare,
+ce conteaza este faptul ca prima variabila din clauza va fi -1 apoi -2 apoi
+-3 s.a.m.d., asta insemnand ca ce va face prima data solver-ul va fi sa nege
+o variabila pe care poate sa o nege pentru sunt crescatoare si pot fi toate
+negate in acelasi timp(-1 -2 -3 s.a.m.d.), asa ca solutia pe care o va afisa
+solver-ul va fi cea mai restrictiva si astfel cea corecta.
+
+----------------------------------TASK 2----------------------------------------
+
+************LOGICA************
+
+Exemplul folosit pentru explicatii este:
+
+4 4 3
+1 2
+2 3
+2 4
+3 4
+
+O variabila pentru fiecare combinatie de mafiot si pozitia din familia extinsa.
+Vor rezulta numarul de mafioti * dimnesiunea familiei extinse => 4 * 3 = 12
+
+De aceasta data se asigneaza un mafiot pozitiei asa ca variabilele vor arata
+astfel:
+
+Poz1_maf1 Poz1_maf2 Poz1_maf3 Poz1_maf4    1-4              
+Poz2_maf1 Poz2_maf2 Poz2_maf3 Poz2_maf4    5-8                 
+Poz3_maf1 Poz3_maf2 Poz3_maf3 Poz3_maf4    9-12
+
+Fiecare pozitie trebuie sa aiba fix un mafiot => cel putin un mafiot si
+cel mult un mafiot
+
+De asemenea fiecare mafiot nu trebuie sa ocupe mai mult de o pozitie in clica
+=> maxim o pozitie per mafiot
+Nu trebuie margine inferioara pentru ca nu toti mafiotii trebuie sa faca parte
+din familia extinsa.
+
+Definita familiei extinse este o multime de mafioti care se inteleg. Astfel
+trebuie sa am clauze care au grija ca 2 mafioti care nu se inteleg sa nu faca
+parte in acelasi timp din familia extinsa.
+
+I) Clauze care au grija ca fiecare pozitie sa aiba cel putin un mafiot:
+
+o clauza pentru fiecare pozitie => dimensiunea familiei extinse = 3
+
+Poz1_maf1 Poz1_maf2 Poz1_maf3 Poz1_maf4              
+Poz2_maf1 Poz2_maf2 Poz2_maf3 Poz2_maf4                
+Poz3_maf1 Poz3_maf2 Poz3_maf3 Poz3_maf4
+
+Explicatie analog I) de la taskul 1.
+
+II) Clauze care au grija ca fiecare pozitie sa aiba cel mult un mafiot:
+
+O clauza pentru fiecare pereche de variabile corespondente unei pozitii =>
+3 pozitii * combinari de 4 luate cate 2 => 3 * 4!/(2! * 2!) = 3 * 3 * 2 = 18 clauze
+
+!Poz1_maf1 !Poz1_maf2
+!Poz1_maf1 !Poz1_maf3
+!Poz1_maf1 !Poz1_maf4
+!Poz1_maf2 !Poz1_maf3
+!Poz1_maf2 !Poz1_maf4
+!Poz1_maf3 !Poz1_maf4
+!Poz2_maf1 !Poz2_maf2
+!Poz2_maf1 !Poz2_maf3
+!Poz2_maf1 !Poz2_maf4
+!Poz2_maf2 !Poz2_maf3
+!Poz2_maf2 !Poz2_maf4
+!Poz2_maf3 !Poz2_maf4
+!Poz3_maf1 !Poz3_maf2
+!Poz3_maf1 !Poz3_maf3
+!Poz3_maf1 !Poz3_maf4
+!Poz3_maf2 !Poz3_maf3
+!Poz3_maf2 !Poz3_maf4
+!Poz3_maf3 !Poz3_maf4
+
+Explicatie analog II) de la taskul 1.
+
+III) Clauze care au grija ca mafioti care nu se inteleg sa nu faca parte amandoi
+din familia extinsa:
+
+Daca exista perechile (1, 2), (2, 3), (2, 4), (3, 4), atunci
+sigur nu ar trebui sa faca parte din familia extinsa in acelasi timp pe
+pozitii diferite (1, 3) si (1, 4).
+
+Numarul de mafioti care nu se inteleg e diferenta dintre combinarile mafiotiilor 
+cate 2 si numarul relatiilor => 4!/(2! * 2!) - 4 = 2 * 3 - 4 = 2 perechi
+
+Vor fi combinari de 3(dimensiunea familiei extinse) luate cate 2 clauze pentru
+fiecare pereche unilaterala => 3!/2! = 3 clauze pt fiecare pereche => 3 * 2 perechi = 6 clauze
+
+Pentru a avea clauzele care sunt bilaterale trebuie sa iau si perechile
+(3, 1) si (4, 1) => inca 6 clauze => un total de 12 clauze
+
+!Poz1_maf1 !Poz2_maf3               -1 -7
+!Poz1_maf3 !Poz2_maf1               -3 -5
+!Poz1_maf1 !Poz3_maf3               -1 -11   
+!Poz1_maf3 !Poz3_maf1               -3 -9           
+!Poz2_maf1 !Poz3_maf3               -5 -11     
+!Poz2_maf3 !Poz3_maf1               -7 -9       
+!Poz1_maf1 !Poz2_maf4               -1 -8       
+!Poz1_maf4 !Poz2_maf1               -4 -5     
+!Poz1_maf1 !Poz3_maf4               -1 -12    
+!Poz1_maf4 !Poz3_maf1               -4 -9               
+!Poz2_maf1 !Poz3_maf4               -5 -12 
+!Poz2_maf4 !Poz3_maf1               -8 -9
+
+Clauzele sunt asemanatoare cu III) de la taskul 1. Diferenta este ca de aceasta
+data se folosesc non-relatiile in loc de relatii, iar mafiotii sunt in loc de
+spioni.
+
+IV) Clauze care au grija ca un mafiot sa nu aiba mai mult de o pozitie in
+familia extinsa:
+
+!Poz1_maf1 !Poz2_maf1              -1 -5             
+!Poz1_maf1 !Poz3_maf1              -1 -9                
+!Poz2_maf1 !Poz3_maf1              -5 -9                            
+!Poz1_maf2 !Poz2_maf2              -2 -6                        
+!Poz1_maf2 !Poz3_maf2              -2 -10              
+!Poz2_maf2 !Poz3_maf2              -6 -10                   
+!Poz1_maf3 !Poz2_maf3              -3 -7                           
+!Poz1_maf3 !Poz3_maf3              -3 -11                                    
+!Poz2_maf3 !Poz3_maf3              -7 -11                       
+!Poz1_maf4 !Poz2_maf4              -4 -8                               
+!Poz1_maf4 !Poz3_maf4              -4 -12                        
+!Poz2_maf4 !Poz3_maf4              -8 -12       
+
+sunt combinari de 3(dimensiunea familiei extinse) luate cate 2 clauze pentru
+fiecare mafiot => 3!/2! * 4 = 3 * 4 = 12 clauze
+
+Analog explicatiei de la II) de la taskul 1 doar ca in loc de mafioti avem
+pozitii si in loc de spioni avem mafioti.
+
+************IMPLEMENTARE SI COMPLEXITATE************
+
+Citirea, descifrarea si scrierea sunt asemanatoare cu task-ul 1 asa ca nu le
+mai discut. De asemenea complexitatea lor este la fel de neimportanta. Ce ma
+intereseaza este complexitatea formularii clauzelor.
+
+Operatiile de calculare a numarului total de clauze sunt tot O(1) si in
+aceasta situatie pentru ca tot combinari de cate 2 se folosesc.
+
+1) minimumOneMafiaClauses() Task2.java
+
+Se foloseste de minimumOneClauses despre care am vorbit la task-ul 1. De
+aceasta data propertyOne este dimensiunea familiei extinse si propertyTwo este
+numarul de mafioti => O(K * N), unde K este marimea familiei extinse si N
+numarul total de mafioti
+
+2) maximumOneMafiaClauses() Task2.java
+
+Se foloseste de maximumOneClauses, cu propertyOne drept dimensiunea familiei
+extinse si propertyTwo drept numarul de mafioti, ce avea complexitatea
+O(propertyOne * propertyTwo^2) => O(K * N^2)
+
+3) keepAwayNotRelatedMafias() Task2.java
+
+Cum index-ul de aceasta data e dupa pozitie si mafiotii sunt cei asignati n-am
+putut sa fac functia ca differentSpiesForRelatedMafiasClauses(). A trebuit
+sa trec prin toate non-relatiile si apoi sa fac toate posibilitatile de pozitii
+diferite pe care le-ar putea avea acei mafioti(sunt mereu aceleasi).
+
+Ma folosesc de metoda generateBadRelations() pentru a genera non-relatiile.
+Trece prin toate posibilitatile de relatii asemeni metodei de la
+maximumOneClauses si complexitatea se calculeaza asemanator cu Gauss si se
+ajunge la O(N^2) pentru o iteratie de O(1), unde N reprezinta numarul total
+de mafioti. Insa in acest caz la fiecare iteratie se apeleaza metoda
+constainsRelation care cauta prin toata lista de relatii si ce are o
+complexitate de O(M), unde M este numarul de relatii. Astfel complexitatea lui
+generateBadRelations() este de O(N^2 * M).
+
+Dupa ce s-au generat relatiile se merge printr-un for prin toate non-relatiile
+generate => complexitate O(R), unde R reprezinta numarul total de non-relatii.
+Numarul de nonrelatii mai poate fi scris ca combinariOf2(N) - M, dar pentru
+simplitate il lasam ca R.
+
+Apoi 2 for-uri imbricate ce iau toate posibilitatile de pozitii din familia
+extinsa => O(K^2), cu K dimensiunea familia extinse => complexitatea
+for-ului per total va fi O(R) * O(K^2) = O(R * K^2)
+
+Astfel complexitatea metodei per total este O(N^2 * M) + O(R * K^2) =
+O(N^2 * M + R * K^2)
+
+4) maximumOnePositionClauses() Task2.java
+
+De aceasta data n-am putut folosi maximumOneClauses pentru ca nu mai impun
+o restrictie asupra obiectului asignat, ci asupra celui caruia asignez. Trebuie
+sa ma asigur ca un mafiot nu poate sa fie in mai multe pozitii in acelasi timp.
+Astfel merg prin toti mafiotii (O(N)) si pentru fiecare combinatie de pereche
+de pozitii posibila(O(K^2)) creez clauze care sa nu le permita variabilelor
+corespunzatoare sa existe in acelasi timp => O(N * K^2) complexitate, unde N
+este numarul total de mafioti si K este dimensiunea familiei extinse
+
+Astfel complexitatea totala a metodei formulateOracleQuestion() este:
+O(K * N) + O(K * N^2) + O(N^2 * M + R * K^2) + O(N * K^2) =
+O(K * (N^2 + N) + O(N^2 * M + R * K^2) + O(N * K^2) = O(K * N^2) +
+O(N^2 * M + R * K^2 + N * K^2) = O(K * N^2 + N^2 * M + R * K^2 + N * K^2) =
+O(N^2 * (K + M) + K^2 * (R + N))
+
+----------------------------------TASK 3----------------------------------------
+
+************LOGICA************
+
+Inainte de a face minim-ul, e esential sa fac reducerea de la task-ul 3 la 
+task-ul 2. Este destul de observabil ca task-ul 2 este o clica si task-ul 3
+este vertex cover, asa ca trebuie sa fac o reducere de la vertex-cover la
+clica.
+
+Pergamentul de care m-am folosit pentru acest task este:
+https://www.clear.rice.edu/comp487/VC_Clique.pdf
+
+In situatia noastra avem graful G(N, M), unde N este multimea mafiotilor si
+M este multimea relatiilor dintre ei. Pentru acest graf trebuie sa cream graful
+complementar si anume G'(N, R), unde R este multimea non-relatiilor dintre
+mafioti. Apoi trebuie sa rezolvam clica pentru graful G' si pentru o dimensiune
+a familiei extinse egala cu N - Z, unde Z este numarul de arestari(sa nu
+folosesc tot K ca se incurca) si N numarul de mafioti.
+
+Pentru a gasi minimul de arestari trebuie doar sa testam valorile de la cea mai
+mica la cea mai mare(Z) pana clica gaseste o solutie. In momentul in care a
+gasit familia extinsa pentru G', atunci solutia vertex-cover pentru G va fi
+formata din mafiotii care nu se afla in solutia task-ului 2.
+
+************IMPLEMENTARE SI COMPLEXITATE************
+
+In solve() incep prin citirea datelor de intrare. Metoda readProblemData()
+are doar complexitatea O(M) asa ca o putem ignora in calculul complexitatii.
+Generez non-relatiile, stim de la task-ul 2 ca metoda generateBadRelations() are
+complexitatea O(N^2 * M), unde N este numarul de mafioti si M numarul de relatii
+dintre ei.
+
+Apoi iau un for de la 1 pana la numarul total de mafioti unde contorul
+reprezinta numarul de arestari incercat la iteratia curenta. Cum am zis mai
+sus dimensiunea familiei extinse (K) este egala cu diferenta dintre numarul
+de mafioti si numarul de arestari(N - Z). La fiecare iteratie se reduce la
+task-ul 2 si se foloseste functia solve().
+
+Metoda reduceToTask2() scrie pe prima linie N R K, unde N este numarul de 
+mafioti, R este numarul de non-relatii al task-ului 3, K este dimensiunea 
+familiei extinse care e calculata ca N - Z. Toate aceste operatii sunt O(1) 
+pentru un append de O(1). Apoi pur si simplu adaug toate non-relatiile drept 
+relatii pentru task-ul 2 printr-un for ce merge Z iteratii => complexitatea lui
+reduceToTask2() este de O(R)
+
+Revenind la for-ul precedent, la fiecare iteratie se calculeaza K-ul care,
+operatie de O(1), se face reducerea ce are complexitatea O(R) si se rezolva
+task-ul 2 pentru datele de intrare procesate ce stim ca are o complexitate
+de O(N^2 * (K + M) + K^2 * (R + N)) => complexitatea unei iteratii
+este O(R + N^2 * (K + M) + K^2 * (R + N)) = O(N^2 * (K + M) + K^2 * (R + N))
+
+Se fac N astfel de iteratii => complexitatea for-ului este de
+O(N) * O(N^2 * (K + M) + K^2 * (R + N)) . Insa nu este chiar corect sa il las 
+asa pentru ca K se tot schimba de la o iteratie la alta, dar stiu ca K este 
+maxim egal cu N asa ca pot spune ca complexitatea forului este O(N) * 
+O(N^3 + M + N^2 * R + N^3) = O(N^4 + M * N + N^3 * R)
+
+In momentul in care clica gaseste o solutie se iese din for, dupa se extrage
+raspunsul ultimului task2 rulat cu metoda extractAnswerFromTask2(). Daca nu
+a gasit o solutie si iese din for tot e ok, inseamna ca trebuie arestati
+toti mafiotii pentru a sparge ring-ul deci s-a ajuns la o solutie desi nu
+neaparat dorita.
+
+In metoda extractAnswerFromTask2() incep prin a lua solutia task-ului 2
+si anume fac K citiri, unde K este ultima dimensiune de familie extinsa din
+for inainte de a se iesi din el. Insa acest K e variabil in functie de intrarea
+primita, asa ca mai bine am spune ca sunt maxim N citiri si anume O(N).
+
+Dupa pentru fiecare mafiot se verifica daca se afla in lista de solutii a
+task-ului 2, daca nu se afla se baga drept solutie pentru task-ul 3. For-ul
+ce trece prin fiecare mafiot are N iteratii, iar for-ul mai mic ce trece prin
+mafiotii "siguri" are K iteratii si anume maxim N iteratii. Astfel tot for-ul
+are o complexitate de O(N) * O(N) = O(N^2) => complexitatea metodei
+extractAnswerFromTask2() este O(N) + O(N^2) = O(N^2).
+
+Intorcandu-ne in .solve(), mai ramane doar metoda writeAnswer() ce scrie 
+mafiotii ce trebuie arestati si anume face Z operatii, unde Z sunt numarul de 
+arestari minim pentru intrarea curenta, altfel spus sunt maxim N arestari(maxim
+se aresteaza toti mafiotii), deci are complexitate de O(N).
+
+Complexitatea metodei solve() este astfel O(N^2 * M) + O(N^4 + M * N + N^3 * R)
++ O(N^2) + O(N) = O(N^2 * (M + 1) + N) + O(N^4 + M * N + N^3 * R) =
+= O(N^2 * M) + O(N^4 + M * N + N^3 * R) = O(N^4 + M * (N + N^2) + N^3 * R) =
+O(N^4 + M * N^2 + N^3 * R)
+
+----------------------------------BONUS-----------------------------------------
+
+************LOGICA************
+
+De aceasta data am indexat variabilele dupa mafioti astfel fiecare mafiot i
+are o variabila Maf_i corespunzatoare. Daca Maf_i e adevarat inseamna
+ca face parte din vertex cover, altfel se considera ca nu face parte.
+
+Un lucru foarte important cand cautam un minim vertex cover este ca rezultatul
+sa respecte proprietatile unui vertex cover. Si anume pentru fiecare muchie
+din graf trebuie ca macar unul dintre cele 2 noduri, ce realizeaza muchia, sa
+faca parte din vertex cover. In situatia noastra trebuie ca daca 2 mafioti se
+inteleg, cel putin unul dintre ei sa fie arestat. Pentru a sparge organizatia
+de mafioti(adica multitudinea de mafioti care se inteleg), trebuie sa distrugem
+toate relatiile dintre ei, pentru a distruge toate relatiile trebuie sa arestam
+unul dintre cei 2 mafioti care se inteleg pentru fiecare astfel de relatie
+, destul de logic as zice.
+
+Astfel pentru fiecare relatie (i, j) trebuie ca fie i, fie j sa fie arestati =>
+M clauze(unde M este numarul de relatii) de forma (i OR j). Aceste clauze
+trebuie sa fie hard, conditia de acoperirea a intregului graf trebuie
+respectata oricare ar fi output-ul.
+
+In acest moment avem siguranta ca output-ul este un vertex cover, insa nu avem
+certitudinea ca output-ul va fi minim(cel mai probabil sa nu fie). Pentru a-i
+spune solver-ului ca vertex cover-ul trebuie sa fie minim, avem nevoie de
+ponderi. Solver-ul folosit in cadrul temei este un Max-SAT, astfel ca acesta
+incearca sa aleaga variabilele in asa fel incat suma ponderilor clauzelor
+satisfacute sa fie maxima, or altfel spus ca suma ponderilor clauzelor
+nesatisfacute sa fie minima.
+
+Clauzele soft pe care le folosesc au forma P -Maf_i, unde Maf_i este indexul
+variabilelor corespondente mafiotului i, iar P este ponderea clauzei. Pentru
+un P mare, se satisface clauza -Maf_i si astfel mafiotul i nu se aresteaza.
+Motivul pentru care ii spun solver-ului ce sa nu aresteze este pentru ca
+astfel intra in conflict cu clauzele hard de mai sus. Daca as avea clauza
+P Maf_i, pentru toti mafiotii, oricare ar fi ponderea P a acestor clauze,
+solver-ul ar putea pur si simplu sa zica ca toti mafiotii trebuie arestati
+pentru ca asta nu ar intra in contradictie cu clauzele "fie mafiotul i sau
+j arestat din relatie", pentru ca aceasta lasa optiunea ca i si j sa fie amandoi
+arestati.
+
+Spre exemplu putem lua un graf cu 2 mafioti indexati 1 si respectiv 2 care
+se inteleg intre ei si decidem urmatoarele clauze(luam varianta corecta si
+anume P -Maf_i):
+
+7 1 2 0
+2 -1 0
+4 -2 0
+
+Daca consideram drept top valoarea 7, atunci clauza (1 OR 2) este hard si
+trebuie neaparat respectata. Iar cum implementeaza un Max-SAT, solver-ul
+va alege sa satisfaca clauza -2 pentru ca are ponderea mai mare si ajungem
+la aresterea lui 1 si astfel spargem ring-ul format din cei 2 mafioti. In
+cazul cu P Maf_i, ar fi putut fi respectate si clauzele (1 w:2), (2 w:4) si
+clauza (1 OR 2 w:7) in acelasi timp pentru 1 si 2 adevarate, moment in care
+nu am fi spart ring-ul de mafioti.
+
+Acum ca ne-am decis pe clauza P -Maf_i si stim de ce functioneaza, trebuie
+sa ne decidem cum sa alegem ponderile. O metoda foarte simpla la care m-am
+gandit e ca pur si simplu sa calculam ponderile in functie de grad-ul mafiotului,
+daca mafiotul are grad-ul mai mare sunt astfel sanse sa distrugem mai multe
+legaturi arestandu-l. Insa m-am decis ca prin clauze sa exprim ce mafioti
+sa nu aresteze => cu cat gradul e mai mare, cu atat ar trebui sa aiba
+ponderea mai mica clauza corespunzatoare non-arestarii.
+
+Calcularea greutatii invers proportionale cu gradul se face scazand din numarul
+total de mafioti, gradul mafiotului. Un mafiot nu poate sa se inteleaga cu mai 
+multi mafioti decat exista, asa ca gradul acestuia este maxim numarul total
+de mafioti => P_i = N - Grad_i, oricare ar fi i (P_i - ponderea mafiotului i,
+Grad_i - gradul mafiotului i, N - numarul total de mafioti).
+
+Insa pentru Grad_i = N, P_i ar fi 0, iar in enunt se precizeaza ca ponderile
+trebuie sa fie pozitive nenule. Desi am observat ca nu sunt teste cu mafioti
+care sa se inteleaga cu toata lumea, pentru corectitudine voi folosi formula
+P_i = N - Grad_i + 1.
+
+************IMPLEMENTARE SI COMPLEXITATE************
+
+Citirea ca de obicei e O(M), unde M este numarul total de relatii. Descifrarea
+oracolului este O(N), pentru ca proceseaza toate variabilele, iar noi avem o
+variabila pentru fiecare mafiot => N variabile. Scrierea rezultatului este
+O(N), pentru ca in cel mai rau caz trebuie sa afiseze un vertex cover cu toti
+mafiotii.
+
+Ce ne intereseaza umpic mai mult este formulateOracleQuestion(). Inafara de metode
+sunt operatii de O(1), considerand writer.append() ca fiind O(1). Prima metoda
+apelata este calculateDegrees() ce calculeaza gradele mafiotilor. Intai, pentru
+fiecare mafiot pune un entry in hashMap => complexitate O(N). Apoi pentru fiecare
+relatie creste gradul calculat al sursei si destinatiei => complexitate O(M) =>
+=> complexitatea lui calculateDegrees() este O(M + N).
+
+Apoi se apeleaza metoda calculateSumOfWeights() ce pentru fiecare grad aduna
+ponderea corespunzatoare si cum raportul mafiot-grad este 1:1 => complexitatea
+este O(N).
+
+Metoda keepAtLeastaMafiaPerRelation() creeaza o clauza (sursa OR destinatie)
+pentru fiecare relatie => complexitate O(M).
+
+Si nu in ultimul rand, metoda minimumNumberOfMafias() adauga clauza P -Maf_i
+pentru fiecare mafiot => complexitate O(N).
+
+Insumand complexitatile, rezulta ca formulateOracleQuestion() are complexitatea
+O(M + N + N + M + N) = O(2 * M + 3 * N) = O(M + N).
+
+Asa ca metoda .solve() va avea complexitatea O(M + N) + O(M) + O(N) + O(N) =
+= O(M + 2 * N) = O(M + N). O complexitate mult mai buna decat cea de la task-ul
+3 care era O(N^4 + M * N^2 + N^3 * R).
+
+
+
+
+
+
+
+
+
+
+
+
+

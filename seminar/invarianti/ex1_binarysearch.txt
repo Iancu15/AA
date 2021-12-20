@@ -1,0 +1,34 @@
+Invariant: v[start] <= x <= v[stop] sau x nu apartine vectorului
+
+Initializare:
+	Pentru start inital 0 si stop final n - 1, daca x apartine
+vectorului atunci sigur este intre v[0] si v[n-1], altfel daca nu apartine
+vectorului se respecta cealalta posibilitate din invariant
+
+Mentinere:
+	In cazul in care x nu apartine la iteratia i din vector, atunci
+nu va apartine din la iteratia i+1 din vector pentru ca vectorul nu se
+modifica in decursul unei iteratii.
+
+	Presupunem ca x la inceputul iteratiei i era intre v[start] si v[stop]. Daca
+acesta se regaste la mijloc(v[mid] == x), se termina programul, lucru
+ce este total corect pentru ca din definita lui mid acesta se afla intre
+start si stop si noi am presupus ca x ar trb sa fie intre start si stop.
+
+	In cazul in care x se afla la stanga lui v[mid](in cazul in care e mai mic
+pentru ca vectorul este sortat), atunci se seteaza stop = mid - 1. Cum
+v[start] <= v[mid] <= v[stop] si din if stim ca x < v[mid] =>
+v[start] <= x < v[mid] <=> v[start] <= x <= v[mid - 1], deci pentru noul stop
+se respecta invariantul la final de iteratie.
+
+	In cazul in care x este la dreapta lui v[mid] si anume x > v[mid] <=>
+<=> x >= v[mid-1] => v[mid-1] <= x <= v[stop], deci pentru start = mid-1 se
+va respecta invariantul.
+
+Finalizare:
+	Se iese din for in momentul in care start > stop, moment in care x nu s-a
+regasit in vector. Daca s-ar fi regasit conform mentinerii am stii ca s-ar fi
+ajuns la el. Si de asemenea din invariant x este in vector doar daca se afla
+intre v[start] <= x <= v[stop], astfel pentru start > stop, x nu poate fi
+v[stop] <= x < v[stop]. Deci se respecta invariantul la finalizare pentru x
+nu apartine vectorului.

@@ -1,0 +1,27 @@
+1) Bucla mica
+Invariant: v[i+1...j-1] >= x
+
+Initializare: v[j la j-1] sunt multimea vida >= x adev
+
+Mentinere: Pp asertiunea P(i) adev => P(i-1) adev (i descreste)
+la inceput de iteratie P(i) v[i+1...j-1] > x
+Daca i < 0 sau v[i] <= x se trece la finalizare
+Consideram i >= 0 si v[i] > x, atunci v[i+1] = v[i] si cum v[i] > x atunci si
+v[i + 1] > x => v[i...j-1] > x => P(i-1) A
+
+Finalizare: Daca s-a iesit pentru ca i = -1 => v[0] = x = v[j] =>
+v[0] >= x => v[0...j-1] >= x => P adev
+Daca s-a iesit pentru ca v[i] <= x, cum la inceput de iteratie v[i+1...j-1] >= x
+si cum nu s-a modificat nici i, nici j, nici v, atunci proprietate inca se
+respecta
+
+2) Bucla mare
+Invariant: v[0...j-1] este sortat si contine primii j termeni initiali
+
+Initializare: j = 1 => v[0...0] = v[0] care e sortat ca e doar un element si
+contine primul element v[0] ca nu s-a produs niciun swap
+
+Mentinere: Pp adev P(j) => P(j + 1) adev
+
+Am decis ca invariantul pentru bucla mica se respecta mereu, asa ca la
+finalizare fie a iesit pentru i = -1 si astfel v[0...j-1] >= v[0...]

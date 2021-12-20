@@ -1,0 +1,31 @@
+def Probl(M, s):
+    [n m] = size(M)
+    L = new Set
+    for i in 0..n-1:
+        for j in 0..m-1:
+            isPartOfSubset = choice(TRUE, FALSE)
+            if (isPartOfSubset):
+                S = new struct
+                S.number = M[i][j]
+                S.x = i
+                S.y = j
+                L.add(S)
+
+    sum = 0
+    for S in L:
+        sum += S.number
+
+    if (sum < s):
+        fail
+
+    for S1 in L:
+        isConnected = FALSE
+        for S2 in L:
+            if (S1 == S2):
+                continue
+            if ((S2.x == S1.x + 1) || (S2.x == S1.x - 1) || (S2.y == S1.y + 1) || (S2.y == S1.y -1)):
+                isConnected = TRUE
+        if (isConnected == FALSE):
+            fail
+
+    success

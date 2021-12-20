@@ -1,0 +1,16 @@
+len(l) = fold(inc, 0, l)
+
+CB:
+l = []
+MS = len([]) =(L1) 0
+MD = fold(inc, 0, []) =(F1) 0
+MS = MD = 0 ADEV
+
+PI:
+l = a:x
+Dem.: len(a:x) = fold(inc, 0, a:x)
+II: len(x) = fold(inc, 0, x)
+
+MS = len(a:x) =(L2) 1 + len(x) =(II) 1 + fold(inc, 0, x)
+MD = fold(inc, 0, a:x) = inc(a, fold(inc, 0, x)) = fold(inc, 0, x) + 1
+Adunarea e comutativa => MS = MD => Adev

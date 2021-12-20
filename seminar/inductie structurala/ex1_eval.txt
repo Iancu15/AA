@@ -1,0 +1,23 @@
+eval(subset(e, f), n) = eval(e, eval(f, n))
+CB:
+e = 0 => MS = eval(subset(0, f), n) =(S1) = eval(0, n) =(E1) = 0
+		 MD = eval(0, eval(f, n)) =(E1) = 0 A
+
+e = 1 => MS = eval(subset(1, f), n) =(S2) eval(1, n) =(E2) = 1
+		 MD = eval(1, eval(f, n)) =(E2) 1 A
+
+e = x => MS = eval(subset(x, f), n) =(S3) eval(f, n) =(E3) n
+		 MD = eval(x, eval(f, n)) =(E3) eval(f, n) =(E3) n
+
+PI:
+I) e = [e1 + e2]
+II: eval(eval(subset(e1, f), n) = eval(e1, eval(f, n))
+    eval(eval(subset(e2, f), n) = eval(e2, eval(f, n))
+
+MS = eval(subset([e1 + e2], f), n) =(E3) n
+MD = eval([e1 + e2], eval(f, n)) =(E3) eval(f, n) =(E3) n
+A
+
+II) e = [e1 * e2] Analog [e1 + e2]
+
+III) e = [-e2] Analog [e1 + e2] 

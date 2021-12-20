@@ -1,0 +1,51 @@
+Axiome size:
+(S1) size(empty) = 0
+(S2) size(node(x, elem, y)) = size(node(x)) + size(node(y)) + 1
+
+Axiome countif:
+(C1) countif(p, empty) = 0 (nimic satisface proprietatea)
+(C2) countif(p, node(x, elem, y)) = countif(x) + countif(y) + p(elem)
+(presupun ca face transformarea automat din {True, False} in {1, 0} ca sa nu
+incarc axioma cu if-uri)
+
+all(p, t) => countif(p, t) == size(t)
+
+CB:
+t = empty
+(1) all(p, empty) = true (All1)
+(2) countif(p, empty) = 0 (C1)
+(3) size(empty) = 0 (S1)
+din (2) si (3) => (countif(p, empty) == size(empty)) = true
+Cum all(p, empty) = true rezulta implicatia true => true care este adevarata
+
+PI:
+t = node(x, elem, y)
+Dem.: all(p, node(x, elem, y)) => countif(p, node(x, elem, y)) == size(node(x, elem, y))
+II: all(p, x) => countif(p, x) == size(x)
+	all(p, y) => countif(p, y) == size(y)
+
+all(p, node(x, elem, y)) = p(elem) && all(p, x) && all(p, y) (All2)
+countif(p, node(x, elem, y)) = countif(x) + countif(y) + p(elem) (C2)
+size(node(x, elem, y)) = size(node(x)) + size(node(y)) + 1 (S2)
+
+p(elem) && all(p, x) && all(p, y) => p(elem) && (countif(p,x) == size(x)) &&
+(countif(p, y) == size(y))
+
+Daca all(p, node(x, elem, y)) = false => implica orice (Adev)(6)
+
+all(p, node(x, elem, y)) = true => p(elem) = true
+(countif(p, x) == size(x)) = true =>  countif(p, x) = size(x)
+Analog countif(p, y) = size(y)
+
+countif(p, node(x, elem, y)) = countif(p, x) + countif(p, y) + p(elem) =
+countif(p, x) + countif(p, y) + 1(stim ca p(elem) = true) (4)
+
+size(node(x, elem, y)) = size(node(x)) + size(node(y)) + 1 (S2) (5)
+
+Stim ca countif(p, x) = size(x) si ca countif(p, y) = size(y) =>
+=> countif(p, x) + countif(p, y) = size(x) + size(y) =>
+countif(p, x) + countif(p, y) + 1 = size(x) + size(y) + 1 => Conform 4 si
+5 ca countif(p, node(x, elem, y)) = size(node(x, elem, y)) =>
+=> (countif(p, node(x, elem, y)) == size(node(x, elem, y))) = true =>
+=> ca avem implicatia true => true ceea ce este adevarata => Conform (6) ca
+este adevarat si astfel inductia e rezolvata

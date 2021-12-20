@@ -1,0 +1,25 @@
+1) Bucla mica
+P(j): pentru toate v[j+1...n-1] elementul din stanga este mai mic
+(Ex.: v[n-1]>v[n-2])
+
+Initializare: j = n - 1 => v[n-1+1...n-1] = v[n...n-1] respecta ceva => adev
+
+Mentinere: Pp P(j) adev => P(j+1) adev
+
+La inceput de iteratie avem j si se respecta v[j+1...n-1] cu proprietatea,
+apoi daca v[j] > v[j-1] nu se intampla nimic si creste i-ul, astfel ca
+se va respecta proprietatea pentru v[j+2...n-1]. Creste j-ul si devine (j+1)
+si am dedus mai devreme ca se respecta proprietatea pentru v[n-1...j+2] =>
+P(j+1) adev => P(j) adev, oricare ar fi j de la n-1 la i+1.
+
+Finalizare: Se termina bucla pentru j = i => pentru v[i+1...n-1] ar trb sa
+se respecta, ceea ce e adevarat ca pentru v[i+1] s-a facut respectarea la
+iteratia (i+1).
+
+2) Bucla mare
+P(i): pentru toate v[n-i...n-1] sunt ordonate crescator si sunt cele mai mari
+(i-1) elemente din vector
+
+Initializare: i = 0 => v[n...n-1] face ceva => adev
+
+Mentinere: Pp P(i) adev => P(i+1) adev

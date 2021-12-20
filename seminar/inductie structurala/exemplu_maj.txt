@@ -1,0 +1,17 @@
+maj(e, union(x, m2)) => maj(e, x) ^ maj(e, m2) (II)
+
+Dem.: maj(e, union(a:x, m2)) => maj(e, a:x) ^ maj(e, m2)
+
+MD = maj(e, a:x) ^ maj(e, m2) = (e >= a) ^ maj(e, x) ^ maj(e, m2)
+
+MS = maj(e, union(a:x, m2)) => {union(x, m2) | member(a, m2), a:union(x, m2) | !member(a, m2)}
+Cazul 1: member(a, m2) = true => MS = maj(e, union(x, m2))
+maj(e, union(x, m2) => maj(e, x) ^ maj(e, m2)
+{member(a, m2) = true, maj(e, m2)} => (maj(e,m2) => (e >= a)) =>
+maj(e, union(x, m2)) => maj(e, x) ^ maj(e, m2) ^ (e >= a) A
+
+Cazul 2: member(a, m2) = false => MS = maj(e, a:union(x, m2))
+Propr: maj(e, a:union(x, m2)) => (e >= a) ^ maj(e, union(x, m2))
+Dupa ce se dem. aia, maj(e, a:union(x, m2)) => (e >= a) ^ maj(e, union(x, m2))
+=> (e >= a) ^ maj(e, x) ^ maj(e, m2) A
+NOT COOL

@@ -1,0 +1,197 @@
+# Iancu Alexandru-Gabriel 324CD
+
+1. Structura input
+
+Pe prima linie din fisierele de citire se afla numarul de noduri din graf, iar
+fiecare a i-a linie, de dupa, corespunde nodului (i - 1), indexarea nodurilor
+facandu-se de la 0. Nodurile care nu au vecini voar avea pe linie -1.
+
+Exemplu:
+
+5 -> 5 noduri
+-1 -> nodul 0 n-are vecini
+3 2 -> nodul 1 are drept vecini nodurile 2 si 3
+1 3 4 -> nodul 2 are vecinii 1, 3 si 4
+1 2 -> nodul 3 are vecinii 1 si 2
+2 -> nodul 4 are vecinul 2
+
+2. tests.py
+
+Fisierul python tests.py primeste numarul de teste, numarul minim si maxim de
+noduri din fiecare test si le genereaza in folderul /in. In caz ca primeste
+un numar minim mai mare decat numarul maxim afiseaza un mesaj de eroare. Pentru
+un numar fix e noduri in toate testele se introduce acelasi numar maxim si
+minim. Testele din arhiva au noduri aleator alese intre 1 si 50. Pentru unele
+teste cu noduri intre 50 si 100 backtracking-ul dureaza foarte mult asa ca drept 
+exemplu pentru etapa 2 am ales ceva ce se ruleaza rapid.
+
+Pentru alegerea vecinilor aletoriu m-am folosit de metoda choice din pachetul
+numpy [1] si pentru a nu lua nod-ul in calcul am folosit structura propusa
+de cineva pe stackoverflow [2].
+
+3. algo.h GraphList
+
+Pentru reprezentare am folosit o lista de adiacenta datorita usurintei scrierii
+codului si a accesarii usoare a vecinilor. In makefile am un flag de optimizare
+-O2 care va scapa implicit de aceasta structura si o va inlocui cu un alt tip de
+date, presupun vectori ca se acceseaza mai rapid.
+
+Aceasta clasa este formata dintr-un vector de liste de noduri si un int care
+stocheaza numarul de noduri. Un nod este o clasa formata din numarul nodului
+si culoarea acestuia.
+
+In constructor se adauga nodul corespunzator index-ului la inceputul fiecarei
+liste de vecini. In nodul respectiv se va stoca culoarea, nodurile vecine
+nu se folosesc de campul de culoarea care este default 0.
+
+Metoda addnodes primeste un pointer la fisierul de citire si adauga nodurile
+conform structurii din fisier. Fiecare nod are o linie corespunzatoare in
+fisier unde sunt insirati vecinii acestuia. Citesc linia respectiva si adaug
+cate un nodul la finalul listei de vecini. Daca nodul nu are vecini nu mai
+adaug nimic si ramane doar nodul curent in lista.
+
+4. algo.cpp Backtracing() isSafe()
+
+Functia Backtracking() este recursiva si verifica toate combinatiile
+posibile de perechi chei-noduri si in momentul in care gaseste o combinatie
+buna intoarce adevarat. Functia primeste ca parametru graful alocat dinamic
+pentru a se pastra intre apelari, nodul care va fi testat si un numar de culori
+ce va trebui respectat in graful rezultat. Daca nu gaseste nicio combinatie
+pentru numarul respectiv de culori intoarce fals si rezulta ca numarul
+cromatic al acelui grafului este mai mare.
+
+Functia isSafe() primeste ca parametru graful, nodul care se testeaza si
+culoarea pentru care se testeaza. Se cauta in lista de vecini un nod care
+sa aiba culoarea data ca parametru, daca se gaseste inseamna ca acea culoare
+este luata si functia intoarce fals. In caz contrar culoarea e libera si se
+intoarce adevarat.
+
+In functia recursiva se testeaza initial daca s-a ajuns la capatul iteratiei
+curente(nodul a ajuns ultimul nod + 1). Daca nu atunci se testeaza fiecare
+culoarea pe nodul curent. Cand se gaseste una corecta i se schimba culoarea
+nodului si apelez functia pentru urmatorul nod. Daca nu s-a gasit o culoare
+pentru nodul urmator modific culoarea la 0 si testez urmatoarele culori.
+Daca nodul 0 nu gaseste nicio culoare buna, functia intoarce fals.
+
+Codul pentru cele doua functii este luat de la adresa [3], varianta C++. Am
+luat doar cele doua functii(isSafe si BactrackingUtil) pentru ca pot apela
+functia recursiva direct in main. Modificarile aduse de mine au fost sa modelez
+algoritmul sa functioneze pe liste de adiacenta.
+
+5. algo.cpp Greedy()
+
+Algoritmul se foloseste de un vector ajutator numit available care tine cont de
+culorile ramase libere la fiecare iteratie. Elementul i este true daca culoarea
+i este libera si false in caz ca nu este. Marimea vectorului de culori este
+egala cu numarul de noduri. Nu am gasit o formula usor de implementat de
+calculare a maximului numarului cromatic asa ca am lasat limita superioara
+drept numarul de noduri. In cel mai rau caz nu exista muchii si toate nodurile
+sunt colorate cu culori diferite, desi e foarte improbabil sa se intample in 
+testele mele.
+
+Se iau nodurile secvential si se itereaza prin fiecare vecini si se modifica
+vectorul available corespunzator pentru iteratia curenta. Daca nodul are campul
+culoarea diferit de 0 inseamna ca este colorat(cu o culoarea de la 1 la
+graph->nodes) si voi seta culoarea pe care o are acesta drept nevalabila in
+vector. Parcurg toate culorile pana gasesc una care este valabila si voi colora 
+nodul curent astfel.
+
+La fiecare iteratie verific daca s-a trecut la o culoare de valoare mai mare
+si modific corespunzator numarul cromatic. Intorc numarul cromatic la finalul
+functiei.
+
+Codul pentru functie este luat de la adresa [4], varianta C++. Am modificat
+codul pentru a functiona cu liste de adiacenta si am facut mici retusari,
+de exemplu nu am mai facut culorile -1 si astfel am setat culoarea 0 drept
+non-culoare. Toate for-urile in care se parcurgeau culorile incepand acum de la
+1.
+
+6. algo.cpp WelshPowell()
+
+Algoritmul este prezentat in detaliu la adresa [5], urmarind pasii am scris
+codul de la 0.
+
+Pentru a ordona nodurile dupa grad am creat o clasa auxiliara in header numita
+Degree care stocheaza numarul unui nod si gradul acestuia. Sortarea se face
+descrescator folosind functia qsort [6] si o functie auxiliara de comparare 
+asupra vectorului degrees.
+
+Dupa ce s-au ordonat nodurile se ia nodul cu cel mai mare grad necolorat,
+nodurile sunt necolorate initial asa ca se ia primul nod din vectorul degrees.
+Apoi se cauta in vector nodul cu gradul cel mai mare necolorat care nu e vecin
+cu nodul ales. Dupa ce se coloreaza acest nod(in caz ca e gasit) se cauta
+nodul cu gradul cel mai mare care nu e vecin cu cele doua noduri. Se continua
+asa pana nu mai sunt noduri care nu sunt vecine cu nodurile colorate in iteratia
+curenta. La urmatoarea iteratie se foloseste alta culoare si se cauta din nou
+nodul cu cel mai mare grad care e necolorat, sunt aceeasi pasi pana se trece la
+iteratia urmatoare unde se schimba culoarea. Se continua iteratiile pana ce
+toate nodurile sunt colorate
+
+Algoritmul coloreaza pentru un numar cromatic mai mic decat Greedy, dar cu un
+timp de executie mai mare. Motivul pentru care am ales Welsh Powell e 
+pentru ca mi se pare cel mai echilibrat timp de executie-corectitudine. N-am 
+gasit un algoritm mai corect decat acesta care sa nu afecteze considerabil
+timpul de executie.
+
+7. algo_test main()
+
+Creez un graf si adaug nodurile din fisierul de citire dat ca argument in linia
+de comanda. Construiesc numele fisierului de output conform numelui fisierul
+de input si il deschid pentru scriere.
+
+Ma folosesc de high_resolution_clock din biblioteca chrono pentru a cronometra
+fiecare algoritm [7] . Apelez WelshPowell() si Greedy() si stochez numerele
+lor cromatice si testez pe graful rezultat corectitudinea acestuia folosindu-ma
+de functia auxiliara isCorrectGraph().
+
+Backtracking() se apeleaza de 2 ori pentru a testa numarul cromatic al fiecarui
+algoritm. Se stocheaza valoarea de adevar a afirmatiei "Exista o combinatie
+de colorare a grafului cu numarul cromatic maxim dat ca parametru?". Valoarea
+de adevar e falsa doar in 2 situatii: fie a gresit Backtracking(), fie
+a gresit WelshPowell sau Greedy. Prima situatie iese automat din discutie
+pentru ca Backtracking() este mereu corect. Deci ramane doar cazul in care 
+algoritmul euristic a gresit, ceea ce se poate intampla si daca se intampla se 
+va tine cont in statistica.
+
+8. Structura output
+
+Se afiseaza informatii relevante secvential pentru fiecare algoritm dupa cum
+urmeaza:
+
+WelshPowell: <- numele algoritmului
+Vertex 0 with color 1 <- graful dupa colorare
+Vertex 1 with color 1
+Vertex 2 with color 2
+Vertex 3 with color 2
+Vertex 4 with color 2
+
+Elapsed time: 1.398e-06 seconds <- timpul de executie in secunde
+The resulted graph is correct <- corectitudinea grafului, "correct" in caz
+                                   ca e corect pe graful curent si "incorrect" 
+                                                                in caz contrar
+The chromatic number is 2 <- numarul de culori folosite in graful rezultat
+
+9. Makefile
+
+Creeaza executabilul algo_test folosind fisierele .o ale algo.cpp si
+algo_test.cpp. Executabilul este optimizat cu flagul -O2.
+
+Pentru a crea fisierele de citire se foloseste regula make_tests si pentru a
+crea fisierele de iesire se foloseste regula run_tests.
+
+Referinte:
+
+[1] https://het.as.utexas.edu/HET/Software/Numpy/reference/generated/numpy.random.choice.html
+Ultima accesare 30 Noiembrie 2020
+[2] https://stackoverflow.com/questions/29804599/python-random-number-excluding-one-variable
+Ultima accesare 30 Noiembrie 2020
+[3] https://www.geeksforgeeks.org/m-coloring-problem-backtracking-5/?ref=lbp
+Ultima accesare 30 Noiembrie 2020
+[4] https://www.geeksforgeeks.org/graph-coloring-set-2-greedy-algorithm/?ref=lbp
+Ultima accesare 30 Noiembrie 2020
+[5] https://www.geeksforgeeks.org/welsh-powell-graph-colouring-algorithm/
+Ultima accesare 30 Noiembrie 2020
+[6] http://www.cplusplus.com/reference/cstdlib/qsort/
+Ultima accesare 30 Noiembrie 2020
+[7] https://www.pluralsight.com/blog/software-development/how-to-measure-execution-time-intervals-in-c--
+Ultima accesare 30 Noiembrie 2020
